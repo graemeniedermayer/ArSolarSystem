@@ -152,7 +152,7 @@ allRequests.then(x=>{
             // swap axis
             locations.forEach(vec=> {
                 let tmp = vec.y;
-                vec,x = -vec.x
+                vec.x = -vec.x
                 vec.y = vec.z;
                 vec.z = -tmp;
             } )
