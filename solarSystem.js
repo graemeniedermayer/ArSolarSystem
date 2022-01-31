@@ -90,10 +90,12 @@ startGps = (freq = 5000)=> {
 
 // request all locations
 newDate = new Date()
+const tomorrow = new Date(newDate)
+tomorrow.setDate(tomorrow.getDate() + 1)
 startDateStr= `${newDate.getFullYear()}-${newDate.getUTCMonth()+1}-${newDate.getUTCDate()}`
-endDateStr= `${newDate.getFullYear()}-${newDate.getUTCMonth()+1}-${newDate.getUTCDate()+1}`
+endDateStr= `${tomorrow.getFullYear()}-${tomorrow.getUTCMonth()+1}-${tomorrow.getUTCDate()}`
 // To do revise (starts at january 1st 2000)
-rotationICRFToEarthAngle = (Math.PI*2*(newDate.getUTCHours()+newDate.getUTCMinutes()/60)-12)/24
+rotationICRFToEarthAngle = (Math.PI*2*(newDate.getUTCHours()-12+newDate.getUTCMinutes()/60))/24
 latitude = 50.4452
 longitude = -104.6189
 //   angle between x and magnetic north
@@ -132,13 +134,11 @@ allRequests.then(x=>{
             // apply latitude and longitude  STEP3
             let phi = Math.PI*(90-latitude)/180
             let theta = Math.PI*(longitude+180)/180
-            console.log(phi)
-            console.log(theta)
-            longRot = new THREE.Matrix4().makeRotationAxis ( new THREE.Vector3(0,0,1), -theta )
-            latRot = new THREE.Matrix4().makeRotationAxis ( new THREE.Vector3(0,1,0), -phi )
+            console.log(JSON.stringify(locations.map(x=>x.clone().toArray())))
+            latRot = new THREE.Matrix4().makeRotationAxis ( new THREE.Vector3(0,1,0), phi )
+            longRot = new THREE.Matrix4().makeRotationAxis ( new THREE.Vector3(0,0,1), theta )
             
             locations.forEach(vec=>vec.applyMatrix4(latRot).applyMatrix4(longRot))
-            console.log(locations.map(x=>x.clone()))
             console.log(JSON.stringify(locations.map(x=>x.clone().toArray())))
             // translate earth raduis upwards (is this unnecessary)
             // Magnetic Rotation time delay issue? no there shouldn't be?
@@ -146,18 +146,19 @@ allRequests.then(x=>{
             // console.log(locations.map(x=>x.clone()))
 
             // There could be a translation upwards of 6000km (earths raduis?) Does it matter?
-            console.log(northAngle)
             magneticRotation = new THREE.Matrix4().makeRotationAxis ( new THREE.Vector3(0,1,0), -northAngle )
 
-            // swap axis
             locations.forEach(vec=> {
                 let tmp = vec.y;
-                vec.x = -vec.x
+                vec.x = vec.x;
                 vec.y = vec.z;
                 vec.z = -tmp;
             } )
             console.log(JSON.stringify(locations.map(x=>x.clone().toArray())))
             locations.forEach(vec=>vec.applyMatrix4(magneticRotation))
+            locations.forEach(vec=> {
+                vec.z = vec.z-.3;
+            } )
             console.log(locations.map(x=>x.clone()))
             light = new THREE.PointLight( 0xffffff, 1 );
 	        light.distance = 2;
