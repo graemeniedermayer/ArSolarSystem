@@ -8,8 +8,8 @@ planetsIds = [
     399, //earth
     499, //mars
 
-    599, //saturn
-    699, //jupiter
+    599, //jupiter
+    699, //saturn
     799, //uranus
     899, //neptune
 ]
@@ -20,8 +20,8 @@ planetNames = [
     'earth',
     'mars',
 
-    'saturn',
     'jupiter',
+    'saturn',
     'uranus',
     'nepture'
 ]
@@ -95,7 +95,8 @@ tomorrow.setDate(tomorrow.getDate() + 1)
 startDateStr= `${newDate.getFullYear()}-${newDate.getUTCMonth()+1}-${newDate.getUTCDate()}`
 endDateStr= `${tomorrow.getFullYear()}-${tomorrow.getUTCMonth()+1}-${tomorrow.getUTCDate()}`
 // To do revise (starts at january 1st 2000)
-rotationICRFToEarthAngle = (Math.PI*2*(newDate.getUTCHours()-12+newDate.getUTCMinutes()/60))/24
+timezone = 6 // I'm very confused why the timezone is necessary ( I though the timezone would be included with the longitudinal rotation)
+rotationICRFToEarthAngle = (Math.PI*2*(newDate.getUTCHours()-12+ timezone + newDate.getUTCMinutes()/60))/24
 latitude = 50.4452
 longitude = -104.6189
 //   angle between x and magnetic north
